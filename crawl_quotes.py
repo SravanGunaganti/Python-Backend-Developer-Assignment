@@ -1,5 +1,6 @@
 import json
 import requests
+import lxml
 from bs4 import BeautifulSoup
 
 def getResponse(web_url): 
@@ -18,13 +19,13 @@ def getTagNames(tag_elements):
 def getAuthorDictionary(author_link):
     reference = url.strip('/')+author_link
     response = requests.get(reference)
-    soup = BeautifulSoup(response.text, "html.parser")
-    Author_name = soup.select_one('.author-title').text.strip()
-    born_date = soup.select_one('.author-born-date').text.strip()
-    born_place = soup.select_one('.author-born-location').text.strip()
+    author_soup = BeautifulSoup(response.text, "lxml")
+    author_name = author_soup.select_one('.author-title').text.strip()
+    born_date = author_soup.select_one('.author-born-date').text.strip()
+    born_place = author_soup.select_one('.author-born-location').text.strip()
     born = born_date +" "+ born_place
     reference = response.url
-    return { 'name':Author_name, 'born':born, 'reference':reference}
+    return { 'name':author_name, 'born':born, 'reference':reference}
 
 def getQuoteDictionary(quote_container):
     quote = quote_container.select_one('div .text').text.strip()
